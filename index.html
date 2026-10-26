@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quer namorar comigo?</title>
+<style>
+  :root {
+    --rosa-claro: #ffd1dc;
+    --rosa: #ff6f91;
+    --vermelho: #e63946;
+    --vinho: #8b1e3f;
+    --creme: #fff1f2;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    color: var(--vinho);
+    background: linear-gradient(160deg, var(--rosa-claro) 0%, var(--rosa) 55%, var(--vermelho) 100%);
+    touch-action: manipulation;
+  }
+  main {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .coracao {
+    font-size: clamp(3.5rem, 18vw, 6rem);
+    animation: pulsar 1.2s ease-in-out infinite;
+    margin-bottom: 8px;
+  }
+  @keyframes pulsar {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  h1 {
+    font-size: clamp(1.9rem, 9vw, 3rem);
+    margin: 0 0 32px;
+    line-height: 1.2;
+    color: var(--creme);
+    text-shadow: 0 2px 10px rgba(139, 30, 63, 0.45);
+  }
+  .botoes {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+  }
+  button {
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 40px;
+    min-width: 110px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  button:active { transform: scale(0.94); }
+  #sim {
+    background: var(--creme);
+    color: var(--vermelho);
+    box-shadow: 0 6px 18px rgba(139, 30, 63, 0.4);
+  }
+  #nao {
+    background: var(--vinho);
+    color: var(--creme);
+    box-shadow: 0 6px 18px rgba(139, 30, 63, 0.4);
+  }
+  #nao.solto {
+    position: fixed;
+    z-index: 10;
+    transition: left 0.2s ease, top 0.2s ease, transform 0.15s ease;
+  }
+  #resposta {
+    display: none;
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--creme);
+    text-shadow: 0 2px 10px rgba(139, 30, 63, 0.5);
+    animation: surgir 0.5s ease;
+  }
+  @keyframes surgir {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .final #pergunta { display: none; }
+  .final #resposta { display: block; }
+  .final #nao { display: none; }
+</style>
+</head>
+<body>
+<main id="app">
+  <div id="pergunta">
+    <div class="coracao">💖</div>
+    <h1>Quer namorar comigo?</h1>
+    <div class="botoes">
+      <button id="sim" type="button">sim</button>
+      <button id="nao" type="button">não</button>
+    </div>
+  </div>
+  <p id="resposta">Achou que tinha escolha? Agora vamos na missa juntos ⛪💕</p>
+</main>
+
+<script>
+  const app = document.getElementById('app');
+  const sim = document.getElementById('sim');
+  const nao = document.getElementById('nao');
+
+  function moverNao() {
+    nao.classList.add('solto');
+    const margem = 12;
+    const larg = nao.offsetWidth;
+    const alt = nao.offsetHeight;
+    const maxX = window.innerWidth - larg - margem;
+    const maxY = window.innerHeight - alt - margem;
+    const atualX = nao.getBoundingClientRect().left;
+    const atualY = nao.getBoundingClientRect().top;
+    let x, y, tentativas = 0;
+    // sorteia uma posição bem diferente da atual
+    do {
+      x = margem + Math.random() * Math.max(maxX - margem, 0);
+      y = margem + Math.random() * Math.max(maxY - margem, 0);
+      tentativas++;
+    } while (Math.hypot(x - atualX, y - atualY) < 120 && tentativas < 20);
+    nao.style.left = x + 'px';
+    nao.style.top = y + 'px';
+  }
+
+  // pointerdown garante que o botão fuja antes mesmo do "clique" completar
+  nao.addEventListener('pointerdown', (e) => { e.preventDefault(); moverNao(); });
+  nao.addEventListener('click', (e) => { e.preventDefault(); moverNao(); });
+
+  sim.addEventListener('click', () => { app.classList.add('final'); });
+</script>
+</body>
+</html>
